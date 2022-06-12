@@ -1,0 +1,44 @@
+\documentclass[a4paper, 12pt]{book}
+
+%% Аннотация.
+\newenvironment{abstract}{}{}
+\usepackage{abstract}
+
+%% Преамбула.
+\input{include/preambule.tex}
+
+%% Определения команд.
+\input{include/defines.tex}
+
+%% Определение сред.
+\input{include/environments.tex}
+
+%% Список литературы.
+\addbibresource{references.bib}
+
+\begin{document}
+    % Стиль доказательства.
+    \let\oldproofname=\proofname
+    \renewcommand{\proofname}{\rm\bf{\oldproofname}}
+
+    %% Титульный лист.
+    \input{include/title.tex}
+
+    %% Аннотоция.
+    \input{parts/annotation.tex}
+
+    %% Содержание.
+    \tableofcontents{}
+    \newpage
+
+    \input{parts/introduction.tex} %% Введение.
+    \input{parts/theory.tex}       %% Теоретические сведения.
+
+    %\nocite{*}
+    %\bibliography{references}
+    \printbibliography
+
+    %% Приложение.
+    % \newpage
+    % \input{appendix.tex}
+\end{document}

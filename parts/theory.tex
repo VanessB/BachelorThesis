@@ -1,0 +1,481 @@
+\chapter{Теоретические сведения}
+\label{chapter:theory} \index{Теория}
+
+Прежде чем перейти к описанию численных методов, остановимся подробнее на теории жёстких систем дифференциальных уравнений.
+В данном разделе приведены необходимые для дальнейшего анализа элементы линейной и нелинейной теории устойчивости численных методов.
+Отметим, что данная теория гораздо более полно описана в работах \cite{heirer1999solvingode2, lambert1991methods}.
+
+В дальнейшем часто будет рассматриваться задача Коши вида
+%
+\begin{equation}
+    \label{eq:initial_value_problem}
+    \begin{dcases}
+        \frac{d \bvec{x}}{d t} = f(t, \bvec{x}), \\
+        \bvec{x}(0) = \bvec{x}_0
+    \end{dcases}
+\end{equation}
+%
+Поскольку любую систему обыкновенных дифференциальных уравнений можно свести к автономной, добавив уравнение $ dt / dt = 1 $,
+запись задачи можно упростить:
+%
+\begin{equation}
+    \label{eq:autonomous_initial_value_problem}
+    \begin{dcases}
+        \frac{d \bvec{x}}{d t} = f(\bvec{x}), \\
+        \bvec{x}(0) = \bvec{x}_0
+    \end{dcases}
+\end{equation}
+%
+Раскладывая $ f(\bvec{x}) $ в ряд Тейлора в окрестности $ \bvec{x}_0 $ и пренебрегая членами, содержащими производные порядка выше второго, можно получить линеаризованную задачу Коши:
+%
+\begin{equation}
+    \label{eq:linearized_initial_value_problem}
+    \begin{dcases}
+        \frac{d \bvec{x}}{d t} = f_0 + F(\bvec{x}_0) \cdot (\bvec{x} - \bvec{x}_0), \\
+        \bvec{x}(0) = \bvec{x}_0,
+    \end{dcases}
+\end{equation}
+%
+где $ \left. \frac{\partial f}{\partial \bvec{x}} \right|_{\bvec{x}_0} = F(\bvec{x}_0) \equiv F_0 $~--- матрица Якоби правой части уравнения в точке $ \bvec{x}_0 $.
+
+Для линеаризованной задачи \eqref{eq:linearized_initial_value_problem} известно точное решение.
+%(в общем случае совпадающее с решением задачи \eqref{eq:autonomous_initial_value_problem} только при условии линейности $ f $ по $ \bvec{x} $).
+В случае, если $ F_0 $ обратима, оно имеет вид
+\begin{equation}
+    \label{eq:linearized_solution}
+    \bvec{x}(t) = \bvec{x}_0 + (\exp(t \cdot F_0) - I) F_0^{-1} \cdot f_0
+\end{equation}
+
+\section{Линейная теория устойчивости}
+\label{sec:linear_stability}
+
+В рамках линейной теории устойчивости рассматривается поведение численного метода при решении уравнения \eqref{eq:linearized_initial_value_problem}.
+%В случае $ f_0 = F_0 \cdot \bvec{x}_0 $ задача превращается в \emph{уравнение Далквиста}:
+В случае невырожденной $ F_0 $ при помощи линейной замены $ \bvec{x}' = \bvec{x} - \bvec{x}_0 + F_0^{-1} f_0 $ задача сводится к \emph{уравнению Далквиста}:
+%
+\begin{equation}
+    \label{eq:Dahlquist_equation}
+    \begin{dcases}
+        \dfrac{d \bvec{x}}{d t} = F_0 \cdot \bvec{x}, \\
+        \bvec{x}(0) = \bvec{x}_0
+    \end{dcases}
+    \qquad
+    \Longleftrightarrow
+    \qquad
+    \bvec{x}(t) = \exp(t \cdot F_0) \cdot \bvec{x}_0
+\end{equation}
+
+% Один шаг произвольной схемы численного интегрирования, располагающей только значениями правой части, всегда [?] можно записать в виде
+% %
+% \begin{equation}
+%     \label{eq:numerical_step}
+%     \bvec{x}^{n+1} = \bvec{x}^n + \phi \cdot \Delta t,
+% \end{equation}
+% %
+% где \emph{наклон} $ \phi $ зависит только от значения правой части $ f(\bvec{x}) $ в некоторых точках.
+Для линейных (возможно, многошаговых) численных схем в случае $ f(\bvec{x}) = F_0 \cdot \bvec{x} $ один шаг можно \cite{lambert1991methods} записать в виде
+%
+\begin{equation}
+    \label{eq:stability_function}
+    \bvec{x}^{n+1} = R(\Delta t \cdot F_0) \cdot \bvec{x}^n,
+\end{equation}
+%
+где $ R(z) $~--- \emph{функция устойчивости}, а $ R(\Delta t \cdot F_0) $~--- \emph{матрица перехода}.
+Обычно $ R(z) $ рассматривается как функция комплексного переменного, и потом естественным образом обобщается на матричный аргумент.
+По умолчанию так и будет далее подразумеваться.
+Однако в силу специфики данной работы, понятие функции устойчивости будет иногда обобщаться, сразу предполагая матричный характер
+(то есть прообраз среди функций комплексного переменного может отсутствовать).
+
+Приведём несколько примеров линейных численных схем и их функций устойчивости.
+Эти примеры понадобятся при дальнейшем анализе.
+%
+\begin{align}
+    \text{\emph{Явный метод Эйлера:}}   && \frac{\bvec{x}^{n+1} - \bvec{x}^n}{\Delta t} &= f(\bvec{x}^n) & R(z) &= 1 + z & \label{eq:forward_Euler} \\
+    \text{\emph{Неявный метод Эйлера:}} && \frac{\bvec{x}^{n+1} - \bvec{x}^n}{\Delta t} &= f(\bvec{x}^{n+1}) & R(z) &= \frac{1}{1 - z} & \label{eq:backward_Euler} \\
+    \text{\emph{Метод трапеций:}}       && \frac{\bvec{x}^{n+1} - \bvec{x}^n}{\Delta t} &= \frac{1}{2} f(\bvec{x}^n) + \frac{1}{2} f(\bvec{x}^{n+1}) & R(z) &= \frac{2 + z}{2 - z} & \label{eq:trapezoid}
+\end{align}
+%
+В общем случае двухточечной схемы:
+\begin{align}
+    \frac{\bvec{x}^{n+1} - \bvec{x}^n}{\Delta t} &= (1 - M) f(\bvec{x}^n) + M f(\bvec{x}^{n+1}) & R(z) &= (1 - M z)^{-1}(1 + (1 - M) z), \label{eq:weighted_two_point}
+\end{align}
+где $ M $, вообще говоря, может быть матрицей (в таком случае $ R(z) $ следует изначально рассматривать как матричную функцию).
+Если же $ M $~--- число, то данная схема называется \emph{$ \theta $-методом}.
+
+
+\subsection{Линейная устойчивость}
+\label{subsec:linear_stability}
+
+Рассмотрим формально вопросы затухания аналитического и численного решения с течением времени.
+Для этого потребуются следующие определения и теоремы:
+
+\begin{definition}
+    \label{def:spectral_radius_and_abscissa}
+    Пусть $ \sigma(A) \subseteq \CC $~--- спектр линейного оператора $ A $.
+    Число $ \displaystyle r(A) = \sup \{|\lambda| \mid \lambda \in \sigma(A) \} $ называется \emph{спектральным радиусом} линейного оператора $ A $,
+    а $ \displaystyle s(A) = \sup \{\Re \lambda \mid \lambda \in \sigma(A) \} $~--- \emph{спектральной границей}.
+\end{definition}
+
+\begin{theorem}[формула Бёрлинга-Гельфанда]
+    \label{thm:Beurling-Gelfand_formula}
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $.
+    Тогда $ \displaystyle r(A) = \lim_{n \to \infty} \| A^n \|^{\frac{1}{n}} = \inf_{n \in \NN} \| A^n \|^{\frac{1}{n}} $.
+\end{theorem}
+
+\begin{corollary}
+    \label{cor:spectral_radius_norm_bounds}
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $.
+    Тогда
+    \[
+        \forall \varepsilon > 0 \;\; \exists n_0 \in \NN: \; \forall n > n_0 \quad (r(A))^n \leqslant \| A^n \| < (r(A) + \varepsilon)^n
+    \]
+\end{corollary}
+
+\begin{proof}
+    По теореме \ref{thm:Beurling-Gelfand_formula}
+    \[
+        \forall \varepsilon > 0 \;\; \exists n_0 \in \NN: \; \forall n > n_0 \quad \left| \| A^n \|^{\frac{1}{n}} - r(A) \right| < \varepsilon,
+    \]
+    причём $ \forall n \in \NN \;\; r(A^n) = (r(A))^n \leqslant \| A^n \| $.
+    Тогда
+    \[
+        \forall \varepsilon > 0 \;\; \exists n_0 \in \NN: \; \forall n > n_0 \quad r(A) \leqslant \| A^n \|^{\frac{1}{n}} < r(A) + \varepsilon,
+    \]
+    откуда получаем искомое неравенство.
+\end{proof}
+
+\begin{theorem}[об отображении спектра; \cite{takesaki2001opalgebras1}, предложение 2.8]
+    \label{thm:spectral_mapping_theorem}
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $,
+    $ f $~--- регулярная в окрестности $ \sigma(A) $ функция.
+    Тогда
+    \begin{equation}
+        \label{eq:spectral_mapping_theorem}
+        \sigma(f(A)) = f(\sigma(A))
+    \end{equation}
+\end{theorem}
+
+\begin{lemma}
+    \label{lem:operator_exponential_norm_convergence}
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $. %, причём $ s(A) < 0 $.
+    Тогда
+    \[
+        s(A) = \inf \left \{ \omega \in \RR: \lim_{t \to +\infty} e^{-\omega t} \cdot \| \exp(t \cdot A) \| = 0 \right \}
+    \]
+\end{lemma}
+
+\begin{proof}
+    Обозначим $ T(t) = \exp(t \cdot A) $.
+    Тогда
+    \[
+        T(t) = \exp((n \Delta t + \tau) \cdot A) = \left( T(\Delta t) \right)^n \cdot T(\tau),
+    \]
+    где $ \Delta t > 0 $, $ n = \lfloor t / \Delta t \rfloor $, $ \tau = t - n \Delta t \in [0;\Delta t) $.
+    В силу ограниченности $ A $ имеем $ \| T(t) \| \leqslant e^{t \cdot \| A \|} $.
+    Согласно теореме \ref{thm:spectral_mapping_theorem}, $ \sigma(T(t)) = \exp(t \cdot \sigma(A)) $, из чего следует $ r(T(t)) = e^{t \cdot s(A)} $.
+    Применяя следствие \ref{cor:spectral_radius_norm_bounds} и учитывая, что
+    \[
+        C^{-1} = e^{-\Delta t \cdot \| A \|} \leqslant \| T(-\tau) \|^{-1} = \| T(\tau)^{-1} \|^{-1} \leqslant \| T(\tau) \| \leqslant e^{\Delta t \cdot \| A \|} = C,
+    \]
+    получаем, что $ \forall \varepsilon > 0 \;\; \exists n_0 \in \NN: \; \forall n > n_0 $
+    \[
+        C^{-1} \cdot e^{n \Delta t \cdot s(A)} \leqslant \| T(t) \| \leqslant C \cdot e^{n \Delta t \cdot (s(A) + \varepsilon)}
+    \]
+    Наконец, так как $ n \Delta t = t - \tau $, $ \forall \varepsilon > 0 \;\; \exists t_0 > 0: \; \forall t > t_0 $
+    \[
+        M^{-1} \cdot e^{t \cdot s(A)} \leqslant \| T(t) \| \leqslant M \cdot e^{t \cdot (s(A) + \varepsilon)},
+    \]
+    где $ M = C \cdot e^{\Delta t \cdot |s(A)|} = e^{\Delta t \cdot (\|A\| + |s(A)|)} $. %\limto{\Delta t}{0} 1 $.
+    Отсюда получаем доказываемое утверждение.
+\end{proof}
+
+Следствие \ref{cor:spectral_radius_norm_bounds} позволяет на основе данных о спектре линейного оператора $ A $ оценить асимптотику $ \| A^n \| $,
+а лемма \ref{lem:operator_exponential_norm_convergence}~--- $ \| \exp(t \cdot A) \| $.
+
+Вернёмся к уравнению Далквиста \eqref{eq:Dahlquist_equation}.
+Нас интересуют равномерные оценки на норму численного решения, получаемого заданным методом при заданном постоянном шаге интегрирования.
+Для этого введём следующее определение и утверждение:
+
+\begin{definition}
+    \label{def:stability_region}
+    Множество $ \stabreg = \{ z \in \CC \mid | R(z) | < 1 \} $ называется \emph{областью абсолютной устойчивости} численного метода, обладающего функцией устойчивости $ R(z) $.
+    Множество $ \overline{\stabreg} = \{ z \in \CC \mid | R(z) | \leqslant 1 \} $~--- замыкание области абсолютной устойчивости.
+\end{definition}
+
+\begin{statement}
+    \label{stat:linear_numerical_stability}
+    Пусть численное решение уравнения \eqref{eq:Dahlquist_equation} ищется интегрированием с постоянным шагом $ \Delta t $
+    при помощи метода, обладающего функцией устойчивости $ R(z) $ и соответсвующей областью абсолютной устойчивости $ \stabreg $.
+    Пусть также $ R(z) $ регулярна в окрестности $ \Delta t \cdot \sigma(F_0) $.
+    Тогда $ \bvec{x}^n = \left( R(\Delta t \cdot F_0) \right)^n \cdot \bvec{x}_0 $, и выполнено
+    \begin{align}
+        \Delta t \cdot \sigma(F_0) \subseteq \stabreg \qquad \Longleftrightarrow \qquad & \| \left( R(\Delta t \cdot F_0) \right)^n \| \limto{n}{\infty} 0 \\
+        \Delta t \cdot \sigma(F_0) \subseteq \CC \setminus \overline{\stabreg} \qquad \Longrightarrow \qquad & \| \left( R(\Delta t \cdot F_0) \right)^n \| \limto{n}{\infty} \infty
+    \end{align}
+\end{statement}
+
+\begin{proof}
+    В силу \eqref{eq:stability_function} имеем первое утверждение: $ \bvec{x}^n = \left( R(\Delta t \cdot F_0) \right)^n \cdot \bvec{x}_0 $.
+    Далее заметим, что по теореме \ref{thm:spectral_mapping_theorem}
+    \[
+        \sigma\left( R(\Delta t \cdot F_0) \right) = R\left( \Delta t \cdot \sigma(F_0) \right)
+    \]
+    Отсюда следует, что
+    \begin{align}
+        \Delta t \cdot \sigma(F_0) \subseteq \stabreg \qquad \Longleftrightarrow \qquad & r\left( R(\Delta t \cdot F_0) \right) < 1 \\
+        \Delta t \cdot \sigma(F_0) \subseteq \CC \setminus \overline{\stabreg} \qquad \Longleftrightarrow \qquad & r\left( R(\Delta t \cdot F_0) \right) > 1
+    \end{align}
+    Наконец, применяя следствие \ref{cor:spectral_radius_norm_bounds}, завершаем доказательство утверждения.
+\end{proof}
+
+В теории линейной устойчивости важная роль отводится \emph{A-устойчивости}~--- свойству численного решения уравнения Далквиста не возрастать по норме,
+если не возрастает норма истинного решения.
+Если к тому же при увеличении шага интегрирования норма численного решения на следующей итерации (или, быть может, через некоторе заранее известное число итераций)
+также стремится к нулю, то говорят об \emph{L-устойчивости}.
+Дадим формальное определение.
+
+\begin{definition}
+    \label{def:A_stability}
+    Численный метод называется \emph{A-устойчивым} в случае, если $ \CC^- \equiv \{ z \in \CC \mid \Re z < 0 \} \subseteq \stabreg $.
+\end{definition}
+
+\begin{definition}
+    \label{def:L_stability}
+    Численный метод называется \emph{L-устойчивым} в случае, если он A-устойчив и выполнено $ \displaystyle\lim_{\Re z \to -\infty} R(z) = 0 $.
+\end{definition}
+
+\begin{statement}
+    \label{stat:A_stability_criterion}
+    Пусть $ R(z) $ регулярна в $ \CC^- $.
+    Соответствующий численный метод A-устойчив тогда и только тогда, когда $ \forall F_0 $ выполнено
+    \[
+        \| \exp(t \cdot F_0) \| \limto{t}{+\infty} 0 \qquad \Longrightarrow \qquad \forall \Delta t > 0 \quad \left \| \left( R(\Delta t \cdot F_0) \right)^n \right\| \limto{n}{\infty} 0
+    \]
+\end{statement}
+
+\begin{proof}
+    В силу леммы \ref{lem:operator_exponential_norm_convergence} импликацию из утверждения можно переписать в виде
+    \[
+        \sigma(F_0) \subseteq \CC^- \quad \Longrightarrow \quad \forall \Delta t > 0 \quad \left \| \left( R(\Delta t \cdot F_0) \right)^n \right\| \limto{n}{\infty} 0
+    \]
+    Если также воспользоваться \ref{stat:linear_numerical_stability}, получаем
+    \[
+        \sigma(F_0) \subseteq \CC^- \quad \Longrightarrow \quad \forall \Delta t > 0 \quad \Delta t \cdot \sigma(F_0) \subseteq \stabreg,
+    \]
+    что при произвольном $ F_0 $ равносильно $ \CC^- \subseteq \stabreg $.
+    Это даёт определение \ref{def:A_stability}.
+\end{proof}
+
+\begin{statement}
+    \label{stat:L_stability_property}
+    Пусть $ R(z) $ регулярна в $ \CC^- $.
+    Если соответствующий численный метод L-устойчив, то $ \forall F_0 $ выполнено
+    \[
+        \| \exp(t \cdot F_0) \| \limto{t}{+\infty} 0 \qquad \Longrightarrow \qquad r \left( R(\Delta t \cdot F_0) \right) \limto{\Delta t}{+\infty} 0
+    \]
+\end{statement}
+
+\begin{proof}
+    Аналогично доказательству утверждения \ref{stat:A_stability_criterion}, перепишем импликацию в виде
+    \[
+        \sigma(F_0) \subseteq \CC^- \quad \Longrightarrow \quad r \left( R(\Delta t \cdot F_0) \right) \limto{\Delta t}{+\infty} 0
+    \]
+    В силу теоремы \ref{thm:spectral_mapping_theorem} это эквивалентно
+    \[
+        \sigma(F_0) \subseteq \CC^- \quad \Longrightarrow \quad \sup \{ |\lambda| \mid \lambda \in R(\Delta t \cdot \sigma(F_0)) \} \limto{\Delta t}{+\infty} 0,
+    \]
+    что при произвольном $ F_0 $ равносильно $ \forall z \in \CC^- \; | R(\Delta t \cdot z) | \limto{\Delta t}{+\infty} 0 $.
+    Это верно для L-устойчивых методов по определению \ref{def:L_stability}.
+\end{proof}
+
+Стоит отметить, что утверждение \ref{stat:L_stability_property}, в отличие от \ref{stat:A_stability_criterion}, сформулировано в форме признака, а не критерия.
+Также в нём получено лишь утверждение о пределе спектрального радиуса, а не нормы.
+По сути, это означает, что получаемая для L-устойчивого метода матрица перехода с увеличением размера шага становится <<почти нильпотентной>>.
+Если $ F_0 $ диагонализуема, то из стремления к нулю спектрального радиуса матрицы перехода будет автоматически следовать и стремление к нулю её нормы.
+
+
+\subsection{Линейная жёсткость}
+\label{subsec:linear_stiffness}
+
+
+Как видно из приведённых результатов, спектр матрицы $ F_0 $ может задавать определённые ограничения на шаг интегрирования $ \Delta t $.
+Действительно, если $ s(F_0) < 0 $, но численный метод не A-устойчив, полученное данным методом решение может вести себя некорректно при некоторых $ F_0 $ и $ \Delta t $:
+если $ \Delta t \cdot \sigma(F_0) \not\subseteq \stabreg $, то численное решение может возрастать, в то время как аналитическое решение убывает.
+В тоже время, такая ситуация невозможна независимо от $ \Delta t $ при использовании A-устойчивых методов.
+Но A-устойчивость не гарантирует соизмеримую с аналитическим решением скорость затухания численного; возможен даже случай $ \displaystyle \lim_{\Re z \to -\infty} |R(z)| = 1 $,
+что приводит к слабо затухающим осцилляциям численного решения вокруг нуля при сравнительно быстром стремлении к нулю истинного решения.
+Если требуется рост скорости затухания за конечное число шагов при увеличении $ \Delta t $, следует пользоваться L-устойчивыми методами.
+
+На рисунках \ref{fig:linear_instability_example}, \ref{fig:linear_instability_example_2} проиллюстрировано поведение явного метода Эйлера (не A-ус\-той\-чи\-вый),
+метода трапеций (A-устойчивый, но не L-устойчивый) и неявного метода Эйлера (L-устойчивый) при разных значениях $ z = \Delta t \cdot F_0 $ в одномерной задаче Далквиста.
+
+\begin{figure}[ht!]
+    \centering
+    \begin{gnuplot}[terminal=epslatex, terminaloptions={color dashed size 16cm,6cm}]
+        load './gnuplot/common.gp'
+
+        set style increment default
+        set style data lines
+        set xlabel  '$ t $'
+        set xrange  [ 0 : 10 ] noreverse writeback
+        set ylabel  '$ x(t) $' #rotate by 0
+        set yrange  [ * : * ] noreverse writeback
+
+        set key width -16
+
+        # Параметры.
+        z = -1.5
+        N = 5                    # Число точек.
+        T = 9.0                  # Время интегрирования.
+        lamb = z * (N - 1) / T   # Показатель экспоненты.
+
+        load './gnuplot/Dahlquist.gp'
+
+        set xtics 1
+        set xzeroaxis lw 3
+
+        plot Trapezoid using (times[$1]):(Trapezoid[$1]) with linespoints t 'метод трапеций' lw 3 ps 2, \
+             BackwardEuler using (times[$1]):(BackwardEuler[$1]) with linespoints t 'неявный метод Эйлера' lw 3 ps 2, \
+             ForwardEuler using (times[$1]):(ForwardEuler[$1]) with linespoints t 'явный метод Эйлера' lw 3 ps 2, \
+             f(x) t 'истинное решение' lw 4 lc 'black'
+    \end{gnuplot}
+
+    \caption{Поведение простейших численных методов при решении одномерного уравнения Далквиста ($ z = -1.5 $)}
+    \label{fig:linear_instability_example}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \begin{gnuplot}[terminal=epslatex, terminaloptions={color dashed size 16cm,6cm}]
+        load './gnuplot/common.gp'
+
+        set style increment default
+        set style data lines
+        set xlabel  '$ t $'
+        set xrange  [ 0 : 10 ] noreverse writeback
+        set ylabel  '$ x(t) $' #rotate by 0
+        set yrange  [ * : * ] noreverse writeback
+
+        set key width -16
+
+        # Параметры.
+        z = -15.0
+        N = 5                    # Число точек.
+        T = 9.0                  # Время интегрирования.
+        lamb = z * (N - 1) / T   # Показатель экспоненты.
+
+        load './gnuplot/Dahlquist.gp'
+
+        set xtics 1
+        set xzeroaxis lw 3
+
+        plot Trapezoid using (times[$1]):(Trapezoid[$1]) with linespoints t 'метод трапеций' lw 3 ps 2, \
+             BackwardEuler using (times[$1]):(BackwardEuler[$1]) with linespoints t 'неявный метод Эйлера' lw 3 ps 2, \
+             f(x) t 'истинное решение' lw 4 lc 'black'
+    \end{gnuplot}
+
+    \caption{Поведение простейших численных методов при решении одномерного уравнения Далквиста ($ z = -15 $)}
+    \label{fig:linear_instability_example_2}
+\end{figure}
+
+Зачастую область устойчивости не A-устойчивых методов ограничена (в частности, это верно для всех явных линейных численных методов) или содержит лишь некоторый подсектор $ \CC^- $,
+поэтому ограничение на шаг интегрирования оказывается ограничением сверху.
+Таким образом, спектральные свойства $ F_0 $ обуславливают максимально допустимый шаг численного интегрирования.
+Ситуацию осложняет следующая теорема, требующая в случае одностадийных схем делать выбор между устойчивостью и высоким порядком аппроксимации:
+
+\begin{theorem}[второй барьер Далквиста]
+    \label{thm:Dahlquist_second_barrier}
+    Не существует A-устойчивых линейных многошаговых одностадийных схем с порядком аппроксимации выше второго.
+\end{theorem}
+
+Ограничение на $ \Delta t $ может сохранятся даже при решении нелинейных задач вида \eqref{eq:autonomous_initial_value_problem}.
+Рассмотрим случай, когда характерное время изменения $ F = \frac{\partial f}{\partial \bvec{x}}(\bvec{x}(t)) $
+много больше $ \tau = 1/r(F) $~--- характерного времени реакции системы на небольшие возмущения.
+В таком случае линеаризация \eqref{eq:linearized_initial_value_problem} остаётся достаточно точной дольше характерного времени $ \tau $.
+Это автоматически оставляет в силе ограничения на шаг интегрирования, полученные для линейных систем.
+В частности, если $ s(F) < 0 $, но $ \Delta t \cdot \sigma(F) \not\subseteq \stabreg $, численное решение может вести себя неустойчиво к небольшим возмущениям,
+в то время как истинное решение, наоборот, будет обладать эффектом демпфирования.
+
+Приведённые выше рассуждения показывают, что определённые системы дифференциальных уравнений могут обладать свойствами,
+вынуждающими использовать малый шаг интегрирования при их решении недостаточно устойчивыми в смысле \ref{def:A_stability} и \ref{def:L_stability} методами.
+Традиционно такие системы называются \emph{жёсткими}.
+Как указано в \cite{heirer1999solvingode2, lambert1991methods}, существует несколько определений жёсткости,
+каждое из которых обладает своими достоинствами и недостатками.
+Одно из наиболее популярных определений звучит следующим образом:
+
+\begin{definition}
+    \label{def:stiffness}
+    Система вида $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ называется \emph{жёсткой} в том случае,
+    если для получения корректного численного решения необходимо использовать шаг интегрирования,
+    много меньший характерных масштабов времени, на которых меняется истинное решение.
+\end{definition}
+
+Данное определение слишком общее и не отвечает на вопросы о природе ограничения на шаг интегрирования.
+На основе всего вышеизложенного анализа мы дадим более узкое, но в некоторой степени и более информативное определение жёсткости.
+
+\begin{definition}
+    \label{def:linear_stiffness}
+    Система вида $ \frac{\partial \bvec{x}}{\partial t} = f(\bvec{x}) $ называется \emph{линейно жёсткой} в том случае,
+    если характерное время (линейной) реакции системы на небольшие возмущения $ \tau = 1 / r \! \left( \frac{\partial f}{\partial \bvec{x}} \right) = 1 / r(F) $
+    много меньше характерных масштабов времени, на которых меняется истинное решение.
+\end{definition}
+
+Для численных методов с ограниченной областью устойчивости условие $ \Delta t \cdot \sigma(F) \subseteq \stabreg $ влечет $ \Delta t \sim \tau $.
+Тогда \ref{def:linear_stiffness} оказывается частным случаем \ref{def:stiffness},
+причём необходимость выбора малого шага оказывается обусловленной <<жёстким>> линейным поведением системы в окрестности истинных решений.
+
+
+\subsection{Методы Рунге-Кутты}
+\label{subsec:Runge-Kutta}
+
+Отдельно стоит упомянуть подкласс одношаговых многостадийных линейных численных схем~--- \emph{методы Рунге-Кутты}.
+Строгое определение данных методов можно найти в работах \cite{lambert1991methods, heirer1999solvingode2}.
+Ограничимся лишь формальным их определением для автономных систем через \emph{таблицы Бутчера}:
+\begin{definition}
+    Методом Рунге-Кутты с числом стадий $ s $ называется метод вида
+    \[
+        \bvec{x}^{n+1} = \bvec{x}^n + \Delta t \cdot \sum_{i = 1}^s b_i \cdot \bvec{k}_i
+    \]
+    \[
+        \bvec{k}_i = f\left( \bvec{x}^n + \Delta t \cdot \sum_{j = 1}^s a_{ij} \cdot \bvec{k}_j \right),
+    \]
+    где вектор $ b = (b_i) $ и матрица $ A = (a_{ij}) $ образуют таблицу Бутчера:
+    \[
+        \def\arraystretch{1.5}
+        \left[
+            \begin{array}{c}
+                A \\
+                \hline
+                b
+            \end{array}
+        \right]
+        \quad
+        =
+        \quad
+        \begin{matrix}
+            a_{11} & a_{12} & \cdots & a_{1,s}   \\
+            a_{21} & a_{22} & \cdots & a_{1,s}   \\
+            \cdots & \cdots & \ddots & \vdots    \\
+            a_{s,1} & a_{s,2} & \cdots & a_{s,s} \\
+            \hline
+            b_{1} & b_{2} & \cdots & b_{s} \\
+        \end{matrix}
+    \]
+\end{definition}
+
+Справедлива \cite{heirer1999solvingode2} следующая теорема:
+\begin{theorem}
+    Если метод Рунге-Кутты имеет порядок аппроксимации $ p $, то
+    \[
+        R(z) = 1 + z + \frac{z^2}{2!} + \ldots + \frac{z^p}{p!} + \Oclass(z^{p+1}) = e^z + \Oclass(z^{p+1})
+    \]
+\end{theorem}
+
+\begin{statement}
+    Функцию устойчивости произвольного метода Рунге-Кутты можно найти по формуле
+    \begin{equation}
+        \label{eq:Runge-Kutta}
+        R(z) = 1 + z \cdot b^T (I - z \cdot A)^{-1} e = \frac{\det \left( I - z \cdot A + z \cdot e b^T \right)}{\det \left( I - z \cdot A \right)},
+    \end{equation}
+    где $ e = (1, 1, \ldots, 1)^T $.
+\end{statement}
