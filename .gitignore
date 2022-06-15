@@ -9,5 +9,8 @@
 *.bbl
 *.toc
 *.blg
+*.run.xml
+*.bcf
+*.gnuploterrors
 
 drafts
