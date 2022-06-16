@@ -11,10 +11,13 @@
     \label{eq:initial_value_problem}
     \begin{dcases}
         \frac{d \bvec{x}}{d t} = f(t, \bvec{x}), \\
-        \bvec{x}(0) = \bvec{x}_0
+        \bvec{x}(0) = \bvec{x}_0,
     \end{dcases}
+    \qquad
+    \bvec{x} \in \RR^d, \qquad f: [0;T] \times D \to \RR^d,
 \end{equation}
 %
+где $ D \subseteq \RR^d $.
 Поскольку любую систему обыкновенных дифференциальных уравнений можно свести к автономной, добавив уравнение $ dt / dt = 1 $,
 запись задачи можно упростить:
 %
@@ -52,6 +55,7 @@
     \end{cases}
 \end{equation}
 --- регулярная в $ \CC $ функция.
+
 
 
 \section{Линейная теория устойчивости}
@@ -99,14 +103,13 @@
 \end{align}
 %
 В общем случае двухшаговой одностадийной схемы:
-\begin{align}
-    \frac{\bvec{x}^{n+1} - \bvec{x}^n}{\Delta t} &= (1 - M) f(\bvec{x}^n) + M f(\bvec{x}^{n+1}) & R(z) &= (1 - M z)^{-1}(1 + (1 - M) z), \label{eq:weighted_two_point}
-\end{align}
+\begin{equation}
+    \frac{\bvec{x}^{n+1} - \bvec{x}^n}{\Delta t} = (1 - M) f(\bvec{x}^n) + M f(\bvec{x}^{n+1}) \qquad R(z) = (1 - M z)^{-1}(1 + (1 - M) z), \label{eq:weighted_two_point}
+\end{equation}
 где $ M $, вообще говоря, может быть матрицей (в таком случае $ R(z) $ следует изначально рассматривать как матричную функцию).
 Если же $ M $~--- число, то данная схема называется \emph{$ \theta $-методом}.
 
 
-\newpage
 \subsection{Линейная устойчивость}
 \label{subsec:linear_stability}
 
@@ -122,7 +125,7 @@
 
 \begin{theorem}[об отображении спектра; \cite{takesaki2001opalgebras1}, предложение 2.8]
     \label{thm:spectral_mapping_theorem}
-    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $,
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ \banachspace $ над $ \CC $,
     $ f $~--- регулярная в окрестности $ \sigma(A) $ функция.
     Тогда
     \begin{equation}
@@ -133,13 +136,13 @@
 
 \begin{theorem}[формула Бёрлинга-Гельфанда]
     \label{thm:Beurling-Gelfand_formula}
-    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $.
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ \banachspace $ над $ \CC $.
     Тогда $ \displaystyle r(A) = \lim_{n \to \infty} \| A^n \|^{\frac{1}{n}} = \inf_{n \in \NN} \| A^n \|^{\frac{1}{n}} $.
 \end{theorem}
 
 \begin{corollary}
     \label{cor:spectral_radius_norm_bounds}
-    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $.
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ \banachspace $ над $ \CC $.
     Тогда
     \[
         \forall \varepsilon > 0 \;\; \exists n_0 \in \NN: \; \forall n > n_0 \quad (r(A))^n \leqslant \| A^n \| < (r(A) + \varepsilon)^n
@@ -161,7 +164,7 @@
 
 \begin{lemma}
     \label{lem:operator_exponential_norm_convergence}
-    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $.
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ \banachspace $ над $ \CC $.
     Тогда
     \[
         s(A) = \inf \left \{ \omega \in \RR: \lim_{t \to +\infty} e^{-\omega t} \cdot \| \exp(t \cdot A) \| = 0 \right \}
@@ -317,7 +320,7 @@
 
 \begin{definition}
     \label{def:logarithmic_norm}
-    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ X $ над $ \CC $.
+    Пусть $ A $~--- линейный ограниченный оператор, действующий в банаховом пространстве $ \banachspace $ над $ \CC $.
     Число
     \begin{equation}
         \label{eq:logarithmic_norm}
@@ -332,7 +335,7 @@
 
 \begin{statement}
     \label{stat:logarithmic_norm_properties}
-    Пусть $ A $, $ B $~--- линейные операторы, действующие в конечномерном банаховом пространстве $ X $ над $ \CC $.
+    Пусть $ A $, $ B $~--- линейные операторы, действующие в конечномерном банаховом пространстве $ \banachspace $ над $ \CC $.
     Тогда верно следующее:
     \begin{enumerate}[itemsep=0em]
         \item $ \lognorm{A} $ определена.
@@ -463,7 +466,7 @@
 
 \begin{definition}
     \label{def:stiffness}
-    Система вида $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ называется \emph{жёсткой} в том случае,
+    Система вида $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $ называется \emph{жёсткой} в том случае,
     если для получения корректного (то есть в заданной степени близкого к точному решению как качественно, так и количественно)
     численного решения необходимо использовать шаг интегрирования,
     много меньший характерных масштабов времени, на которых меняется точное решение.
@@ -474,7 +477,7 @@
 
 \begin{definition}
     \label{def:linear_stiffness}
-    Система вида $ \frac{\partial \bvec{x}}{\partial t} = f(\bvec{x}) $ называется \emph{линейно жёсткой} в том случае,
+    Система вида $ \frac{d \bvec{x}}{d t} = f(\bvec{x}) $ называется \emph{линейно жёсткой} в том случае,
     если характерное время (линейной) реакции системы на небольшие возмущения $ \taulin = 1 / r \! \left( \frac{\partial f}{\partial \bvec{x}} \right) = 1 / r(F) $
     много меньше характерных масштабов времени, на которых меняется точное решение.
 \end{definition}
@@ -550,7 +553,7 @@
 построенный по аналогии с \eqref{eq:ETDRK1_explicit} и \eqref{eq:ETDRK1_implicit}, но лишённый упомянутого недостатка.
 
 
-\newpage
+
 \section{Нелинейная теория устойчивости}
 \label{sec:nonlinear_stability}
 
@@ -589,7 +592,7 @@
 
 \begin{definition}
     \label{def:contractivity}
-    Пусть $ \bvec{x}(t) $ и $ \bvec{y}(t) $~--- решения системы $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $.
+    Пусть $ \bvec{x}(t) $ и $ \bvec{y}(t) $~--- решения системы $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $.
     Данные решения называются \emph{сжимающимися} (<<contractive>>) на отрезке $ [a; b] $ в случае
     \[
         \forall t_1, t_2: \; a \leqslant t_1 \leqslant t_2 \leqslant b \qquad \| \bvec{x}(t_2) - \bvec{y}(t_2) \| \leqslant \| \bvec{x}(t_1) - \bvec{y}(t_2) \|
@@ -607,7 +610,7 @@
     \]
 \end{definition}
 
-Для систем вида $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ известно \cite{auzinger1990note, auzinger1993modern} достаточное условие
+Для систем вида $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $ известно \cite{auzinger1990note, auzinger1993modern} достаточное условие
 сжимаемости точных решений.
 
 \begin{definition}
@@ -615,9 +618,9 @@
     Пусть $ \hilbertspace $~--- гильбертово пространство над $ \CC $.
     Функция $ f(t, \bvec{x}) = f: \RR \times D \to \hilbertspace $
     (где $ D \subseteq \hilbertspace $~--- выпуклая область)
-    и система $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ называются \emph{односторонне липшициевыми} на отрезке $ [a; b] $ в случае
+    и система $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $ называются \emph{односторонне липшициевыми} на отрезке $ [a; b] $ в случае
     \[
-        \exists \nu(t): \; \forall \bvec{x}, \bvec{y} \in \hilbertspace, \; \forall t \in [a, b] \quad
+        \exists \nu(t): \; \forall \bvec{x}, \bvec{y} \in D, \; \forall t \in [a, b] \quad
         \Re \dotprod{f(t, \bvec{x}) - f(t, \bvec{y})}{\bvec{x} - \bvec{y}} \leqslant \nu(t) \| \bvec{x} - \bvec{y} \|^2
     \]
 \end{definition}
@@ -625,12 +628,12 @@
 \begin{definition}
     \label{def:dissipative}
     Пусть в определении \ref{def:one-sided_lipschitz} $ \nu(t) \leqslant 0 $.
-    Тогда функция $ f(t, \bvec{x}) $ и система $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ называются \emph{диссипативными}.
+    Тогда функция $ f(t, \bvec{x}) $ и система $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $ называются \emph{диссипативными}.
 \end{definition}
 
 \begin{statement}[достаточный признак сжимаемости]
     \label{def:contractivity_condition}
-    Пусть система $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ диссипативна на $ [a; b] $.
+    Пусть система $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $ диссипативна на $ [a; b] $.
     Тогда все её решения являются сжимающимися на $ [a; b] $.
 \end{statement}
 
@@ -652,7 +655,7 @@
     \[
         \forall t \in [a; b], \; \forall \bvec{x} \in D \quad \lognorm{\frac{\partial f}{\partial \bvec{x}}(t, \bvec{x})} \leqslant \nu(t)
     \]
-    Тогда, если $ \bvec{x}(t) $ и $ \bvec{y}(t) $~--- два решения системы $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $,
+    Тогда, если $ \bvec{x}(t) $ и $ \bvec{y}(t) $~--- два решения системы $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $,
     то для любых $ t_1, t_2 \in \RR: \; a \leqslant t_1 \leqslant t_2 \leqslant b $ выполнено
     \[
         \| \bvec{x}(t_2) - \bvec{y}(t_2) \| \leqslant \exp\left( \int\limits_{t_1}^{t_2} \nu(s) ds \right) \| \bvec{x}(t_1) - \bvec{y}(t_1) \|
@@ -696,21 +699,13 @@
 %
 \begin{equation}
     \label{eq:cosine_system}
-    \begin{cases}
-        \frac{\partial x}{\partial t} = \cos\left( \frac{\pi}{2} \cdot x \right) \\
+    \begin{dcases}
+        \frac{d x}{d t} = \cos\left( \frac{\pi}{2} \cdot x \right) \\
         x(0) = x_0 = 0
-    \end{cases}
+    \end{dcases}
     \qquad
     F(x) = \frac{\partial f}{\partial x} = \frac{\pi}{2} \sin\left( \frac{\pi}{2} \cdot x \right)
 \end{equation}
-%
-% Как видно, характерное время линейной реакции на малые возмущения $ \taulin $ никогда не ниже $ 2 / \pi \approx 0.63 $.
-% Характерные временные масштабы, на которых меняется точное решение, можно сделать примерно такими же,
-% если расположить $ x_0 $ достаточно близко к одному из положений устойчивого равновесия (например, к $ x = 1 $, если взять $ x_0 = 0 $),
-% в окрестности которого система хорошо линеаризуется.
-% Таким образом, система не является линейно жёсткой по определению \ref{def:linear_stiffness}:
-% ограничения на шаг, вызываемые требованиями линейной устойчивости,
-% совпадают с ограничениями на шаг, вызванными требованиями точного воспроизведения деталей решения.
 %
 Система является автономной и имеет множество положений равновесия $ x = 2k + 1, \; k \in \ZZ $.
 Из них устойчивые только $ x = 4k + 1, \; k \in \ZZ $.
@@ -788,12 +783,12 @@ $ |\cos(\pi/2) - \pi/2| \approx 1.58 \approx 1.58 \cdot \max |f(x)| $.
 %
 \begin{equation}
     \label{eq:implicit_Euler_residual}
-    \res(\bvec{x}^{n+1}) = \bvec{x}^{n+1} - \bvec{x}^n - \Delta t \cdot f(t_{n+1}, \bvec{x}^{n+1})
+    \res(t^{n+1}, \bvec{x}^{n+1}) = \bvec{x}^{n+1} - \bvec{x}^n - \Delta t \cdot f(t^{n+1}, \bvec{x}^{n+1})
 \end{equation}
 %
 \begin{equation}
     \label{eq:implicit_Euler_jacobian}
-    \jac(\bvec{x}^{n+1}) = I - \Delta t \cdot F(t_{n+1}, \bvec{x}^{n+1})
+    \jac(t^{n+1}, \bvec{x}^{n+1}) = \frac{\partial \res}{\partial \bvec{x}}(t^{n+1}, \bvec{x}^{n+1}) = I - \Delta t \cdot F(t^{n+1}, \bvec{x}^{n+1})
 \end{equation}
 %
 В нашем случае $ f(x) $ и $ F(x) $ имеют целое семейство корней.
@@ -810,7 +805,7 @@ $ |\cos(\pi/2) - \pi/2| \approx 1.58 \approx 1.58 \cdot \max |f(x)| $.
 
 \begin{definition}
     \label{def:nonlinear_stiffness}
-    Система вида $ \frac{\partial \bvec{x}}{\partial t} = f(t, \bvec{x}) $ называется \emph{нелинейно жёсткой} в том случае,
+    Система вида $ \frac{d \bvec{x}}{d t} = f(t, \bvec{x}) $ называется \emph{нелинейно жёсткой} в том случае,
     если нелинейные свойства правой части существенно влияют на допустимую величину шага интегрирования,
     при которой возможна сходимость используемого метода поиска корней невязки выбранной численной схемы.
 \end{definition}
