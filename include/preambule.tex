@@ -16,10 +16,11 @@
 
 %% Шрифты.
 %\usepackage{euscript}	 % Шрифт Евклид
-%\usepackage{mathrsfs}    % Красивый матшрифт
+%\usepackage{mathrsfs}   % Красивый матшрифт
 
 %% Поля (геометрия страницы).
-\usepackage[includeheadfoot, left=3cm, right=2cm, top=2cm, bottom=2cm, bindingoffset=0cm, headheight=28pt]{geometry}
+\usepackage[includeheadfoot, left=3cm, right=1.5cm, top=2cm, bottom=2cm, bindingoffset=0cm, headheight=15pt]{geometry}
+%headheight=28pt]
 
 %% Русские списки.
 \usepackage{enumitem}
@@ -45,7 +46,7 @@
 \setlength{\parindent}{2em}
 
 %% Интервалы.
-\linespread{1}
+\linespread{1.5}
 \usepackage{multirow}
 
 %% TikZ.
@@ -66,6 +67,16 @@
 \usepackage{float}             % Добавляет возможность работы с командой [H] которая улучшает расположение на странице.
 \usepackage{textcomp, gensymb} % Красивые градусы.
 \usepackage{caption}           % Пакет для подписей к рисункам, в частности, для работы caption*.
+
+%% Вращение pdf или его наполнения.
+\usepackage{rotating}
+\usepackage{pdflscape}
+
+%% Объекты на одтельной странице.
+%\usepackage{afterpage}
+
+%% Контроль положения плавающих объектов.
+\usepackage{placeins}
 
 %% hyperref для ссылок внутри  pdf.
 \usepackage[unicode, pdftex]{hyperref}

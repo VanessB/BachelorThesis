@@ -179,8 +179,9 @@
             \item Вычислить собственное разложение матрицы Якоби правой части $ F_m = V \Lambda V^{-1} $.
             \item Вычислить $ \theta(F_m) = V \theta(\Lambda) V^{-1} $ и $ \bar{\res}_m = \bvec{x}_m^{n+1} - \bvec{x}^n - \Delta t \cdot \left[ M f_m^{n+1} + (I - M) f^n \right] $.
             \item
-                Если $ \| \bar{\res}_m \| > \max \left\{ \varepsilon_{\text{абс}}, \varepsilon_{\text{отн}} \cdot \| \bar{\res}_0 \| \right\} $,
-                то перейти на следующую итерацию по формуле \eqref{eq:weighted_Newton_iteration}, иначе $ \bvec{x}^{n+1} = \bvec{x}_m^{n+1} $.
+                Если $ \| \bar{\res}_m \| > \max \left\{ \abseps, \releps \cdot \| \bar{\res}_0 \| \right\} $,
+                то перейти на следующую итерацию по формуле \eqref{eq:weighted_Newton_iteration},
+                иначе $ \bvec{x}^{n+1} = \bvec{x}_m^{n+1} $ и завершить выполнение.
         \end{itemize}
 \end{itemize}
 
