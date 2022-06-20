@@ -1,7 +1,7 @@
-\documentclass[a4paper, oneside, 12pt]{book}
+\documentclass[a4paper, oneside, 12pt]{report}
 
 %% Аннотация.
-\newenvironment{abstract}{}{}
+%\newenvironment{abstract}{}{}
 \usepackage{abstract}
 
 %% Преамбула.
@@ -22,7 +22,7 @@
     \renewcommand{\proofname}{\rm\bf{\oldproofname}}
 
     %% Титульный лист.
-    \input{include/title.tex}
+    %\input{include/title.tex}
 
     %% Аннотоция.
     \input{parts/annotation.tex}
@@ -39,7 +39,7 @@
 
     %\nocite{*}
     %\bibliography{references}
-    \printbibliography
+    \printbibliography[heading=bibintoc]
 
     %% Приложение.
     % \newpage
