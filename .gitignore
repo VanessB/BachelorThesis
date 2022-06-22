@@ -12,5 +12,6 @@
 *.run.xml
 *.bcf
 *.gnuploterrors
+*.pdf
 
 drafts

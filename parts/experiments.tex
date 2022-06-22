@@ -5,7 +5,7 @@
 целью которых является проверка работы предложенных методов
 на примере жёстких систем дифференциальных уравнений.
 Невязка и матрица Якоби вычисляются при помощи систем автодифференцирования.
-Решение систем линейных алгебраических уравнений делается при помощи библиотеки INMOST \cite{vassilevski2020parallel}.
+Решение систем линейных алгебраических уравнений производится при помощи библиотеки INMOST \cite{vassilevski2020parallel}.
 Диагонализация матрицы производится при помощи библиотеки Eigen \cite{eigenweb}.
 В этой секции референсным решением будет называться численное решение,
 полученное методом трапеций при использовании малого шага по времени ($ 10^5 $ точек).
@@ -145,7 +145,7 @@
              path.'weighted_euler.csv' every ::2 using 1:2 t 'взвешенный метод Эйлера' lw 2 lc 'web-blue'
     \end{gnuplot}
 
-    \caption{Сравнение методов на примере интегрирования системы Лотки-Вольтерры для шага по времени $ \Delta t = 1 $ (сверху) и $ \Delta t = 2 $ (снизу)}
+    \caption{Сравнение методов на примере интегрирования системы Лотки-Вольтерры для шага по времени $ \Delta t = 1 $ (сверху) и $ \Delta t = 2 $ (снизу).}
     \label{fig:Lotka-Volterra}
 \end{sidewaysfigure}
 
@@ -157,8 +157,9 @@
 Так как модифицированный метод Ньютона использует ту же невязку,
 что и численно диссипативный неявный метод Эйлера,
 решение, полученное с его помощью, сильно затухает и является излишне диссипативным.
-Взвешенный метод Эйлера позволяет добиться точности, сравнимой с методом трапеций,
-но за счёт заметно возросшего числа нелинейных итераций.
+Взвешенный метод Эйлера позволяет добиться точности, сравнимой с методом трапеций при $ \Delta t = 1 $,
+но за счёт заметно возросшего числа нелинейных итераций;
+при этом он также решает задачу при $ \Delta t = 2 $.
 
 На рисунке \ref{fig:Lotka-Volterra_residual} приведены графики нормы невязки для метода трапеций,
 модифицированного метода Ньютона и взвешенного метода Эйлера,
@@ -341,7 +342,7 @@
              path.'L_pareschi_russo.csv' every ::1 using 1:2 t 'L-устойчивый метод Парески-Руссо' lw 2, \
     \end{gnuplot}
 
-    \caption{Сравнение методов на примере интегрирования системы Ван дер Поля для шага по времени $ \Delta t = 0.05 $}
+    \caption{Сравнение методов на примере интегрирования системы Ван дер Поля для шага по времени $ \Delta t = 0.05 $.}
     \label{fig:Van_der_Pol}
 \end{sidewaysfigure}
 
@@ -428,10 +429,9 @@
 \label{sec:blood_coagulation_cascade}
 
 Перейдём, наконец, к системе каскада свёртывания крови.
-Данная система взята из \cite{bouchnita2020mathematical, vassilevski2020parallel}
-и является упрощённой моделью более подробного каскада свёртывания крови
-\cite{panteleev2008coagulation, ushakova2018gemo}.
-Уравнения модели приведены в \eqref{eq:blood_coagulation_cascade}, начальные условия и параметры ~--- в таблице \ref{tab:blood_coagulation_cascade}.
+Данная система взята из~\cite{bouchnita2020mathematical, vassilevski2020parallel}
+и является упрощённой моделью более подробного каскада свёртывания крови~\cite{panteleev2008coagulation, ushakova2018gemo}.
+Уравнения модели приведены в~\eqref{eq:blood_coagulation_cascade}, начальные условия и параметры ~--- в таблице~\ref{tab:blood_coagulation_cascade}.
 %
 \begin{equation}
     \label{eq:blood_coagulation_cascade}
@@ -526,7 +526,7 @@
 	\label{tab:blood_coagulation_cascade_results}
 \end{table}
 
-Применение неявного метода Эйлера напрямую ведёт к нефизичному отрицательному решению для $ \Delta t \geqslant 2 $.
+Применение неявного метода Эйлера напрямую ведёт к нефизичному отрицательному решению для $ \Delta t \geqslant 2 $ (рис. \ref{fig:blood_coagulation}).
 В то же время, модифицированный метод Ньютона позволил получить корректное решение для шагов вплоть до $ \Delta t = 10 $ включительно.
 Использование метода трапеций с тем же шагом приводило к появлению сильно осциллирующих нефизичных осцилляций.
 Взвешенный метод Эйлера позволил увеличить точность для маленьких шагов по времени ($ \Delta t \leqslant 0.25 $),
@@ -536,3 +536,55 @@
 Из поведения численных методов снова можно сделать вывод,
 что модель каскада свёртывания крови является жёсткой во всех предложенных смыслах.
 При этом предложенные методы позволяют кратно увеличить шаг интегрирования данной системы без потери устойчивости.
+
+\begin{figure}
+    \begin{center}
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color dashed size 16cm,7cm fontscale 1.0}]
+            load './gnuplot/common.gp'
+
+            set style data linespoints
+            set xlabel  '$ t $'
+            set xrange  [ 0 : * ] noreverse writeback
+            set ylabel  '$ T(t) $' #rotate by 0
+            set yrange  [ * : 2500 ] noreverse writeback
+
+            set key width -16
+
+            set xzeroaxis lw 3
+
+            path = './data/blood_coag/'
+
+            plot path.'implicit_euler.csv' every ::1 using 1:3 t 'неявный метод Эйлера' lw 2, \
+                 path.'trapezoid.csv' every ::1 using 1:3 t 'метод трапеций' lw 2, \
+                 path.'modified_newton.csv' every ::1 using 1:3 t 'модифицированный метод Ньютона' lw 2 lc 'dark-plum', \
+                 path.'weighted_euler.csv' every ::1 using 1:3 t 'взвешенный метод Эйлера' lw 2 lc 'web-blue', \
+                 path.'reference.csv' every ::1 using 1:3 with lines t 'референсное решение' lw 3 lc 'black'
+        \end{gnuplot}
+
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color dashed size 16cm,7cm fontscale 1.0}]
+            load './gnuplot/common.gp'
+
+            set style data linespoints
+            set xlabel  '$ t $'
+            set xrange  [ 0 : * ] noreverse writeback
+            set ylabel  '$ F(t) $' #rotate by 0
+            set yrange  [ * : 700 ] noreverse writeback
+
+            set key width -16
+
+            set xzeroaxis lw 3
+
+            path = './data/blood_coag/'
+
+            plot path.'implicit_euler.csv' every ::1 using 1:7 t 'неявный метод Эйлера' lw 2, \
+                 path.'trapezoid.csv' every ::1 using 1:7 t 'метод трапеций' lw 2, \
+                 path.'modified_newton.csv' every ::1 using 1:7 t 'модифицированный метод Ньютона' lw 2 lc 'dark-plum', \
+                 path.'weighted_euler.csv' every ::1 using 1:7 t 'взвешенный метод Эйлера' lw 2 lc 'web-blue', \
+                 path.'reference.csv' every ::1 using 1:7 with lines t 'референсное решение' lw 3 lc 'black'
+        \end{gnuplot}
+    \end{center}
+    \caption{Сравнение методов на примере интегрирования системы каскада свёртывания крови для шага по времени $ \Delta t = 10 $.
+        Приведены графики зависимости концентрации тромбина (верх) и фибриногена (низ) от времени.}
+    \label{fig:blood_coagulation}
+\end{figure}
+

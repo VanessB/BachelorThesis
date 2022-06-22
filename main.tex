@@ -29,13 +29,15 @@
 
     %% Содержание.
     \tableofcontents{}
+    \setcounter{page}{2} % Начать со второй страницы.
     \newpage
 
-    \input{parts/introduction.tex} %% Введение.
-    \input{parts/theory.tex}       %% Теоретические сведения.
-    \input{parts/methods.tex}      %% Разработка численных методов.
-    \input{parts/experiments.tex}  %% Численные эксперименты.
-    \input{parts/summary.tex}      %% Заключение.
+    \include{parts/introduction.tex} %% Введение.
+    \include{parts/theory.tex}       %% Теоретические сведения.
+    \include{parts/methods.tex}      %% Разработка численных методов.
+    \include{parts/experiments.tex}  %% Численные эксперименты.
+    \include{parts/perspectives.tex} %% Перспективы клинического использования.
+    \include{parts/summary.tex}      %% Заключение.
 
     %\nocite{*}
     %\bibliography{references}
