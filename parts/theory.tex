@@ -634,7 +634,7 @@
     \text{\emph{Неявный:}} && \bvec{x}^{n+1} - \bvec{x}^n &= \left( I - \exp(- \Delta t \cdot F) \right) F^{-1} \cdot f(\bvec{x}^{n+1}) \label{eq:ETDRK1_implicit}
 \end{align}
 %
-Здесь, как и ранее, $ F = \frac{\partial f}{\partial \bvec{x}} $~--- матрица Якоби правой части системы.%
+Здесь, как и ранее, $ F = \frac{\partial f}{\partial \bvec{x}} $~--- матрица Якоби правой части системы.
 %\footnote{Отметим, что мы явно не указываем, в какой именно точке вычисляется $ F $.
 %    Для линейных систем это не важно, но для нелинейных является определённой степенью свободы,
 %    заложенной в методе.}
@@ -893,7 +893,6 @@ $ |\cos(\pi/2) - \pi/2| \approx 1.58 \approx 1.58 \cdot \max |f(x)| $.
              './data/exponential_integrators/tests.csv' every ::1 using 1:5 t 'явный экспоненциальный метод Эйлера' lw 3 ps 2, \
              './data/exponential_integrators/tests.csv' every ::1 using 1:7 t 'предложенный в разделе \ref{sec:weighted_Euler} метод' lw 3 lc 'web-blue' ps 2, \
              f(x) t 'точное решение' with lines lw 4 lc 'black'
-        #'./data/exponential_integrators/tests.csv' every ::1 using 1:8 t 'предложенный в разделе \ref{sec:modified_Newton} метод' lw 3 lc 'dark-plum'ps 2, \
     \end{gnuplot}
 
     \caption{Поведение простейших экспоненциальных интеграторов при решении уравнения \eqref{eq:cosine_system}}
